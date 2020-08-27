@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Test Sample]">
+  <test name="Weather Test(failed)">
+    <classes>
+      <class name="com.test.testcases.WeatherRangeTest">
+        <methods>
+          <include name="setUp"/>
+          <include name="closeUp"/>
+          <include name="locateCity"/>
+        </methods>
+      </class> <!-- com.test.testcases.WeatherRangeTest -->
+    </classes>
+  </test> <!-- Weather Test(failed) -->
+</suite> <!-- Failed suite [Test Sample] -->
