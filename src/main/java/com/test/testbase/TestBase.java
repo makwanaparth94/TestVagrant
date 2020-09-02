@@ -4,14 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import org.omg.CORBA.TIMEOUT;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
@@ -26,9 +22,11 @@ public class TestBase {
 	public static boolean isBrowserOpened = false;
 	public static boolean isURLOpened = false;
 	public static int difference;
+	
 	public ExtentReports report = ExtentReporter.getInstance();
 	
 	public static ExtentTest test;
+	
 	// Code to open Browser
 	public void openBrowser() {
 		if (!isBrowserOpened) {
@@ -109,7 +107,34 @@ public class TestBase {
 		// Return the property value
 		return prop.getProperty(propertyname);
 		}
+	
+	// Code to load Test Data "env.property" file
+	public static String env_getproperty(String propertyname) {
+		Properties prop = new Properties();
+		InputStream input = null;
 		
+		try {
+			input = new FileInputStream(System.getProperty("user.dir") + "//src//test//resources//configurations//env.properties");
+			// load a properties file
+			prop.load(input);
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		finally {
+			if (input != null) {
+				try {
+					input.close();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		// Return the property value
+		return prop.getProperty(propertyname);
+		}
+	
 		//Code to Click on Element by using CSS SELECTOR only
 		public void click(String locator) {
 			driver.findElement(By.cssSelector(locator)).click();
@@ -148,5 +173,5 @@ public class TestBase {
 			return By.cssSelector(cssExpression);
 		}
 		
-		
+
 }

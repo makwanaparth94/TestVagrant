@@ -1,8 +1,11 @@
 package com.test.testcases;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -10,9 +13,11 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.io.Files;
 import com.relevantcodes.extentreports.LogStatus;
 import com.test.services.APIServices;
 import com.test.testbase.Endpoint;
@@ -30,6 +35,7 @@ public class WeatherRangeTest extends TestBase{
 	APIServices service = new APIServices();
 	Response response = null;
 	
+	
 	/*
 	 * Before Test ---> Open Browser and URL
 	 */
@@ -38,7 +44,7 @@ public class WeatherRangeTest extends TestBase{
 	{
 		openBrowser();
 		openURL() ;
-		driver.manage().timeouts().implicitlyWait(Integer.parseInt(or_getproperty("implicit.wait")), TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(Integer.parseInt(env_getproperty("implicit.wait")), TimeUnit.SECONDS);
 	}
 	
 
@@ -53,6 +59,7 @@ public class WeatherRangeTest extends TestBase{
 		test.log(LogStatus.INFO, "Waiting for an alert to visible and handle it");
 		
 		click(or_getproperty("openExtraMenuBars_CSS"));
+		
 		click(or_getproperty("weatherTab_CSS"));
 		test.log(LogStatus.INFO, "Click on 'Weather' tab");
 	}
@@ -73,22 +80,23 @@ public class WeatherRangeTest extends TestBase{
 	 */
 	@Test(priority = 3)
 	public void locateCity() throws Exception {
-		//Search for the CITY and Select a checkbox if it is not selected
+		//Search for the CITY and Select a check box if it is not selected
 		type(or_getproperty("seachTextBox"),testConf.getCityName());
-		test.log(LogStatus.INFO, "Type "+testConf.getCityName()+ "city in Pin Your City ");
-		
-		try{
+		test.log(LogStatus.INFO, "Type "+ testConf.getCityName() + "city in Pin Your City ");
+	
+		try {
 			if(isElementVisible(or_getproperty("validateseachedText_CSS"))) {	
-		
+				
 				if(!(isAlreadySelected(or_getproperty("validateseachedText_CSS")))){
 					click(or_getproperty("validateseachedText_CSS"));
-					test.log(LogStatus.INFO, "Select "+ or_getproperty("validateTextOnWeatherPage")+" city as It is not selected");
+					test.log(LogStatus.INFO, "Select "+ or_getproperty("validateTextOnWeatherPage")+ " city as It is not selected");
 					Thread.sleep(5000);
 					Assert.assertTrue(getElementByXpathContainsText(or_getproperty("hoverOnSelectedCity")).isDisplayed());	
 				}
 				
 			getElementByXpathContainsText(or_getproperty("hoverOnSelectedCity")).click();
-			//Target to desired city location and takes Humidity and Temperature data 
+			
+			//Target location to desired city and takes Humidity and Temperature data 
 			Actions action = new Actions(driver);
 			action.moveToElement(getElementByXpathContainsText(or_getproperty("hoverOnSelectedCity"))).build().perform();
 			test.log(LogStatus.INFO, "Hover to searched city on map and take temp and humidity data for validator range with API data");
@@ -99,7 +107,7 @@ public class WeatherRangeTest extends TestBase{
 			WebElement ui_humidity = getElementByXpathContainsText(or_getproperty("humidityForSelectedCity_XPATH"));
 			int ui_humidity_data = Utilities.getDecimalfromHumidity(ui_humidity.getText());
 			Assert.assertNotEquals(ui_temp.getText(), "");
-
+			
 			//Get the HUmidity and Temp data from Rest API
 			response = service.getCityWeatherData();
 			//Logging Extent
@@ -129,15 +137,15 @@ public class WeatherRangeTest extends TestBase{
 					throw e;
 				}
 				
-			  } else {
+			  }else {
 				  ExtentMethods.Extentlogs_Error("Getting an error because GET API isn't giving 2xx response code");
 				  throw new AssertionError();
+			  }
+			
 			}
-			 		  						
+			else {
+				Assert.fail("Element on Weather page is not displayed");
 			}
-		  else {
-			Assert.fail("Element on Weather page is not displayed");
-		  }
 		}catch(Exception e) {
 			ExtentMethods.Extentlogs_Error(e.getMessage());
 			throw e;

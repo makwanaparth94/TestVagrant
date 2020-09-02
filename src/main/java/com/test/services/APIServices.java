@@ -5,7 +5,6 @@ import com.test.testbase.TestConfiguration;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;
 
