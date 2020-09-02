@@ -15,8 +15,10 @@ import org.testng.annotations.Test;
 
 import com.relevantcodes.extentreports.LogStatus;
 import com.test.services.APIServices;
+import com.test.testbase.Endpoint;
 import com.test.testbase.TestBase;
 import com.test.testbase.TestConfiguration;
+import com.test.utilities.ExtentMethods;
 import com.test.utilities.Utilities;
 
 import io.restassured.response.Response;
@@ -70,17 +72,17 @@ public class WeatherRangeTest extends TestBase{
 	 *  Search for the city and Validate Humidity (% Unit) & Temp (C Unit) from BE and PASS/Fail based on Validator Range
 	 */
 	@Test(priority = 3)
-	public void locateCity() throws InterruptedException {
+	public void locateCity() throws Exception {
 		//Search for the CITY and Select a checkbox if it is not selected
-		type(or_getproperty("seachTextBox"),or_getproperty("searchTextValue"));
-		test.log(LogStatus.INFO, "Type "+ testConf.getCityName() + "city in Pin Your City ");
+		type(or_getproperty("seachTextBox"),testConf.getCityName());
+		test.log(LogStatus.INFO, "Type "+testConf.getCityName()+ "city in Pin Your City ");
 		
 		try{
 			if(isElementVisible(or_getproperty("validateseachedText_CSS"))) {	
 		
 				if(!(isAlreadySelected(or_getproperty("validateseachedText_CSS")))){
 					click(or_getproperty("validateseachedText_CSS"));
-					test.log(LogStatus.INFO, "Select "+ or_getproperty("validateTextOnWeatherPage")+ " city as It is not selected");
+					test.log(LogStatus.INFO, "Select "+ or_getproperty("validateTextOnWeatherPage")+" city as It is not selected");
 					Thread.sleep(5000);
 					Assert.assertTrue(getElementByXpathContainsText(or_getproperty("hoverOnSelectedCity")).isDisplayed());	
 				}
@@ -100,7 +102,9 @@ public class WeatherRangeTest extends TestBase{
 
 			//Get the HUmidity and Temp data from Rest API
 			response = service.getCityWeatherData();
-			System.out.println(response.asString());
+			//Logging Extent
+			ExtentMethods.Extentlogs_GET_WithoutParam(response, Endpoint.BY_CITY_NAME, "Get the details of weather for " +testConf.getCityName()+ " & Validate it with UI data by setting up Temp range: "+testConf.setup_TempDiffInCelsius() +" &Humidity range: "+testConf.setup_HumidityDiffInPercentage());
+			
 			if(response.getStatusCode() == 200) {
 			  
 				int api_humidity_data = Integer.parseInt(response.jsonPath().get("main.humidity").toString()); 
@@ -121,15 +125,22 @@ public class WeatherRangeTest extends TestBase{
 						  Assert.fail("Either Humidity or Temp OR both parameters condition is not matched to required range"); 
 					  } 
 				}catch(NumberFormatException e) {
+					ExtentMethods.Extentlogs_Error("Getting an issue with casting numbers");
 					throw e;
 				}
+				
 			  } else {
-				  throw new AssertionError(); 
+				  ExtentMethods.Extentlogs_Error("Getting an error because GET API isn't giving 2xx response code");
+				  throw new AssertionError();
 			}
 			 		  						
 			}
-		}catch(NoSuchElementException e) {
-			Assert.assertTrue("Element on Weather page is not displayed", false);
+		  else {
+			Assert.fail("Element on Weather page is not displayed");
+		  }
+		}catch(Exception e) {
+			ExtentMethods.Extentlogs_Error(e.getMessage());
+			throw e;
 		}
 	}
 	
