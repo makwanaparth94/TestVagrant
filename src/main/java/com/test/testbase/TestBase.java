@@ -137,6 +137,11 @@ public class TestBase {
 			return driver.findElement(By.xpath(xpathExpression));
 	    }
 	
+		//Code to validate condition for elementToBeClickable
+		public By waitforElementCondition(String cssExpression) {
+			return By.cssSelector(cssExpression);
+		}
+		
 		/*
 		 * Code to take Difference on Humidity and Temperature
 		 */

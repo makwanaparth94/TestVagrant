@@ -44,7 +44,7 @@ public class WeatherRangeTest extends TestBase{
 	@Test(priority = 1)
 	public void openWeather() {
 		WebDriverWait wait = new WebDriverWait(driver, 30);
-		WebElement alertElement = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(or_getproperty("cancelAlert_CSS"))));
+		WebElement alertElement = wait.until(ExpectedConditions.elementToBeClickable(waitforElementCondition(or_getproperty("cancelAlert_CSS"))));
 		alertElement.click();
 		click(or_getproperty("openExtraMenuBars_CSS"));
 		click(or_getproperty("weatherTab_CSS"));
@@ -75,13 +75,13 @@ public class WeatherRangeTest extends TestBase{
 				if(!(isAlreadySelected(or_getproperty("validateseachedText_CSS")))){
 					click(or_getproperty("validateseachedText_CSS"));
 					Thread.sleep(5000);
-					Assert.assertTrue(getElementByXpathContainsText("//*[contains(@title,'"+ or_getproperty("searchTextValue")+"')]").isDisplayed());	
+					Assert.assertTrue(getElementByXpathContainsText(or_getproperty("hoverOnSelectedCity")).isDisplayed());	
 				}
 				
-			getElementByXpathContainsText("//*[contains(@title,'"+ or_getproperty("searchTextValue")+"')]").click();
+			getElementByXpathContainsText(or_getproperty("hoverOnSelectedCity")).click();
 			//Target to desired city location and takes Humidity and Temperature data 
 			Actions action = new Actions(driver);
-			action.moveToElement(getElementByXpathContainsText("//*[contains(@title,'"+ or_getproperty("searchTextValue")+"')]")).build().perform();
+			action.moveToElement(getElementByXpathContainsText(or_getproperty("hoverOnSelectedCity"))).build().perform();
 			
 			WebElement ui_temp = getElementByXpathContainsText(or_getproperty("tempForSelecetedCity_XPATH"));
 			int ui_temp_data = getDecimalfromHumidity(ui_temp.getText());
