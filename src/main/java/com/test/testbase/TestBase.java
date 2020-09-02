@@ -13,6 +13,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.test.utilities.ExtentReporter;
+
 public class TestBase {
 
 
@@ -22,7 +26,9 @@ public class TestBase {
 	public static boolean isBrowserOpened = false;
 	public static boolean isURLOpened = false;
 	public static int difference;
+	public ExtentReports report = ExtentReporter.getInstance();
 	
+	public static ExtentTest test;
 	// Code to open Browser
 	public void openBrowser() {
 		if (!isBrowserOpened) {
@@ -142,42 +148,5 @@ public class TestBase {
 			return By.cssSelector(cssExpression);
 		}
 		
-		/*
-		 * Code to take Difference on Humidity and Temperature
-		 */
-		public int validateHumidityDiff(int ui_data,int api_data) {
-			
-			if(ui_data > api_data) {
-				difference = ui_data - api_data;
-			}else {
-				difference = api_data - ui_data;
-			}
-			return difference;
-		}
 		
-		public float validateTempDiff(float ui_data,float api_data) {
-			
-			if(ui_data > convertTemptoCelsius(api_data)) {
-				difference = (int) (ui_data - api_data);
-			}else {
-				difference = (int) (api_data - ui_data);
-			}
-			return difference;
-		}
-		
-		//Code to convert Temperature from KelVin to Celsius 
-		public float convertTemptoCelsius(float tempInKelvin) {
-			return (float) (tempInKelvin - 273.15);
-		}
-		
-		//Code to get only INT value as all dependent operations are performed in percentage UNIT
-		public int getDecimalfromHumidity(String text) {
-			String[] arrSplit = text.split(":");
-			String[] decimalNo ;
-			if(arrSplit[1].split("%") != null) {
-				 decimalNo = arrSplit[1].split("%");
-					return Integer.parseInt(decimalNo[0].trim());
-			}
-			return Integer.parseInt(arrSplit[1].trim());
-		}
 }

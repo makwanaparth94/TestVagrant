@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Test Sample">
+  
+    <listeners>
+    	<listener class-name="com.test.listeners.CustomListeners"/>
+    </listeners>
         
 	<test name="Weather Test">
 		<classes>
 			<class name="com.test.testcases.WeatherRangeTest" />
 		</classes>
 	</test> <!-- Test -->
-	
+  
 </suite> 
